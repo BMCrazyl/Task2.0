@@ -26,6 +26,7 @@ public class AssignmentServlet extends HttpServlet {
         request.setCharacterEncoding("UTF-8");
         projectDao.ensureArchiveSchema();
         projectDao.archiveCompletedProjects();
+        request.setAttribute("projectList", projectDao.getAll());
         request.setAttribute("taskList", taskDao.getAssignableTasks());
         request.setAttribute("employeeList", employeeDao.getAll());
         request.getRequestDispatcher("/assign.jsp").forward(request, response);
@@ -37,7 +38,14 @@ public class AssignmentServlet extends HttpServlet {
         request.setCharacterEncoding("UTF-8");
         try {
             int taskId=Integer.parseInt(request.getParameter("taskId"));
+            int projectId=Integer.parseInt(request.getParameter("projectId"));
             int employeeId=Integer.parseInt(request.getParameter("employeeId"));
+            boolean validTask = taskDao.getAssignableTasks().stream()
+                    .anyMatch(t -> t.getId() == taskId && t.getProjectId() == projectId);
+            if (!validTask) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Công việc không thuộc dự án đã chọn hoặc không còn khả dụng.");
+                return;
+            }
             String dateStr=request.getParameter("assignedDate");
             Date assignedDate=(dateStr != null && !dateStr.trim().isEmpty())
                     ? Date.valueOf(dateStr.trim()) : new Date(System.currentTimeMillis());

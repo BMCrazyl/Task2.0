@@ -17,7 +17,9 @@
         }
         .autocomplete-menu {
             position: absolute;
-            inset: calc(100% - 2.1rem) 0 auto 0;
+            top: 4.35rem;
+            left: 0;
+            right: 0;
             z-index: 1080;
             max-height: 240px;
             overflow-y: auto;
@@ -187,7 +189,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const employeeMenu = document.getElementById("employeeSuggestions");
 
     function normalize(value) {
-        return (value || "").normalize("NFD").replace(/[\\u0300-\\u036f]/g, "").toLocaleLowerCase("vi").trim();
+        return (value || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLocaleLowerCase("vi").trim();
     }
 
     function openMenu(input, menu) {

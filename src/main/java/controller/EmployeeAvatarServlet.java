@@ -56,6 +56,10 @@ public class EmployeeAvatarServlet extends HttpServlet {
             return;
         }
 
+        if (employee != null) {
+            // Load binary image only for the image response, not during profile/dashboard lookups.
+            employee = employeeDao.getById(employee.getId());
+        }
         if (employee == null || employee.getAvatarData() == null || employee.getAvatarData().length == 0
                 || !ALLOWED_TYPES.contains(employee.getAvatarContentType())) {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);

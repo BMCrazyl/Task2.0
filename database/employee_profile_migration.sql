@@ -4,6 +4,9 @@
   Profile data is stored on dbo.Employee so the employee and admin screens
   always read and write the same record.
 */
+USE task_management_db;
+GO
+
 IF OBJECT_ID(N'dbo.Employee', N'U') IS NULL
 BEGIN
     THROW 50001, 'dbo.Employee must exist before running this migration.', 1;

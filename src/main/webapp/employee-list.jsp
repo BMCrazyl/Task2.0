@@ -102,33 +102,58 @@
                     </h5>
                 </div>
                 <div class="card-body p-4">
-                    <c:if test="${not empty formError}"><div class="alert alert-danger">${formError}</div></c:if>
+                    <c:if test="${not empty formError}"><div class="alert alert-danger"><c:out value="${formError}"/></div></c:if>
                     <form action="${pageContext.request.contextPath}/employees" method="POST">
-                        <!-- ID ẩn để nhận diện sửa hay thêm mới -->
                         <input type="hidden" name="id" value="${employee.id}">
-
-                        <div class="mb-3">
-                            <label class="form-label fw-bold">Họ và tên</label>
-                            <input type="text" name="name" class="form-control" value="${employee.name}" placeholder="VD: Nguyễn Văn A" required>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Họ</label>
+                                <input type="text" name="familyName" class="form-control" value="${employee.familyName}" placeholder="VD: Nguyễn Văn" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Tên</label>
+                                <input type="text" name="givenName" class="form-control" value="${employee.givenName}" placeholder="VD: An" required>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label fw-bold">Email</label>
+                                <input type="email" name="email" class="form-control" value="${employee.email}" placeholder="an.nv@company.com" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Ngày sinh</label>
+                                <input type="date" name="dateOfBirth" class="form-control" value="${employee.dateOfBirth}">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Số điện thoại</label>
+                                <input type="tel" name="phone" class="form-control" value="${employee.phone}" placeholder="0901234567">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Số CCCD</label>
+                                <input type="text" name="identityNumber" class="form-control" value="${employee.identityNumber}" maxlength="30">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Khu vực</label>
+                                <input type="text" name="region" class="form-control" value="${employee.region}" placeholder="Tỉnh / thành phố">
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label fw-bold">Địa chỉ thường trú</label>
+                                <textarea name="permanentAddress" class="form-control" rows="2" maxlength="500"><c:out value="${employee.permanentAddress}"/></textarea>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label fw-bold">Vị trí / Chức vụ</label>
+                                <input type="text" name="position" class="form-control" value="${employee.position}" placeholder="Backend Developer, Kế toán, QA Lead..." required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Tên ngân hàng</label>
+                                <input type="text" name="bankName" class="form-control" value="${employee.bankName}" placeholder="Tên ngân hàng">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Số tài khoản ngân hàng</label>
+                                <input type="text" name="bankAccountNumber" class="form-control" value="${employee.bankAccountNumber}" maxlength="50">
+                            </div>
                         </div>
-                        <div class="mb-3">
-                            <label class="form-label fw-bold">Email</label>
-                            <input type="email" name="email" class="form-control" value="${employee.email}" placeholder="VD: an.nv@company.com" required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label fw-bold">Số điện thoại</label>
-                            <input type="text" name="phone" class="form-control" value="${employee.phone}" placeholder="VD: 0901234567">
-                        </div>
-                        <div class="mb-4">
-                            <label class="form-label fw-bold">Vị trí / Chức vụ</label>
-                            <input type="text" name="position" class="form-control"
-                                   value="${employee.position}" placeholder="VD: Backend Developer, Kế toán, QA Lead..." required>
-                            <small class="text-muted">Nhập chức vụ tùy ý, không bị giới hạn bởi danh sách có sẵn.</small>
-                        </div>
-
-                        <div class="d-flex gap-2">
-                            <button type="submit" class="btn ${not empty employee ? 'btn-warning fw-bold' : 'btn-primary fw-bold'} w-100">
-                                <i class="bi bi-save me-1"></i> ${not empty employee ? 'Lưu Cập Nhật' : 'Lưu Nhân Viên'}
+                        <div class="d-flex gap-2 mt-4">
+                            <button type="submit" class="btn btn-primary fw-bold w-100">
+                                <i class="bi bi-save me-1"></i> Lưu thông tin nhân viên
                             </button>
                             <c:if test="${not empty employee}">
                                 <a href="${pageContext.request.contextPath}/employees" class="btn btn-outline-secondary">Hủy</a>
@@ -178,11 +203,16 @@
                                     </td>
                                     <td><span class="badge bg-light text-dark border">${e.position}</span></td>
                                     <td class="text-center">
-                                        <div class="d-inline-flex gap-1">
+                                        <div class="d-inline-flex flex-wrap gap-1">
                                             <!-- Nút Sửa -->
                                             <a href="${pageContext.request.contextPath}/employees?action=edit&id=${e.id}" 
                                                class="btn btn-outline-warning btn-sm" title="Sửa thông tin">
                                                 <i class="bi bi-pencil-square"></i> Sửa
+                                            </a>
+
+                                            <a href="${pageContext.request.contextPath}/employees?action=detail&id=${e.id}"
+                                               class="btn btn-outline-primary btn-sm" title="Xem chi tiết nhân viên">
+                                                <i class="bi bi-eye"></i> Chi tiết
                                             </a>
 
                                             <!-- Nút Xóa có hộp thoại xác nhận -->
@@ -207,6 +237,55 @@
         </div>
     </div>
 </div>
+
+<c:if test="${showDetailModal and not empty employeeDetail}">
+<div class="modal fade" id="employeeDetailModal" tabindex="-1" aria-labelledby="employeeDetailModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content border-0 shadow">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title fw-bold" id="employeeDetailModalLabel"><i class="bi bi-person-vcard me-2"></i>Chi tiết nhân viên</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Đóng"></button>
+            </div>
+            <div class="modal-body p-4">
+                <div class="text-center mb-4">
+                    <c:choose>
+                        <c:when test="${not empty employeeDetail.avatarContentType}">
+                            <img src="${pageContext.request.contextPath}/employee-avatar?id=${employeeDetail.id}" alt="Ảnh đại diện" class="rounded-circle border shadow-sm" style="width:140px;height:140px;object-fit:cover">
+                        </c:when>
+                        <c:otherwise>
+                            <div class="rounded-circle bg-light border d-inline-flex align-items-center justify-content-center text-secondary" style="width:140px;height:140px;font-size:4rem"><i class="bi bi-person-circle"></i></div>
+                        </c:otherwise>
+                    </c:choose>
+                    <h4 class="fw-bold mt-3 mb-1"><c:out value="${employeeDetail.name}"/></h4>
+                    <span class="badge text-bg-primary"><c:out value="${employeeDetail.position}"/></span>
+                </div>
+                <div class="row g-3">
+                    <div class="col-md-6"><div class="small text-muted">Họ</div><div class="fw-semibold"><c:out value="${employeeDetail.familyName}"/></div></div>
+                    <div class="col-md-6"><div class="small text-muted">Tên</div><div class="fw-semibold"><c:out value="${employeeDetail.givenName}"/></div></div>
+                    <div class="col-md-6"><div class="small text-muted">Ngày sinh</div><div class="fw-semibold"><c:out value="${employeeDetail.dateOfBirth}"/></div></div>
+                    <div class="col-md-6"><div class="small text-muted">Số điện thoại</div><div class="fw-semibold"><c:out value="${employeeDetail.phone}"/></div></div>
+                    <div class="col-md-6"><div class="small text-muted">Email</div><div class="fw-semibold"><c:out value="${employeeDetail.email}"/></div></div>
+                    <div class="col-md-6"><div class="small text-muted">Số CCCD</div><div class="fw-semibold"><c:out value="${employeeDetail.identityNumber}"/></div></div>
+                    <div class="col-md-6"><div class="small text-muted">Khu vực</div><div class="fw-semibold"><c:out value="${employeeDetail.region}"/></div></div>
+                    <div class="col-12"><div class="small text-muted">Địa chỉ thường trú</div><div class="fw-semibold text-break"><c:out value="${employeeDetail.permanentAddress}"/></div></div>
+                    <div class="col-md-6"><div class="small text-muted">Tên ngân hàng</div><div class="fw-semibold"><c:out value="${employeeDetail.bankName}"/></div></div>
+                    <div class="col-md-6"><div class="small text-muted">Số tài khoản ngân hàng</div><div class="fw-semibold"><c:out value="${employeeDetail.bankAccountNumber}"/></div></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <a class="btn btn-primary" href="${pageContext.request.contextPath}/employees?action=edit&id=${employeeDetail.id}"><i class="bi bi-pencil-square me-1"></i>Sửa thông tin</a>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="window.location.href='${pageContext.request.contextPath}/employees'">Đóng</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const modal = document.getElementById("employeeDetailModal");
+    if (modal) new bootstrap.Modal(modal).show();
+});
+</script>
+</c:if>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>

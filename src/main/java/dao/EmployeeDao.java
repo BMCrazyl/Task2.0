@@ -120,24 +120,34 @@ public class EmployeeDao {
         try (Connection conn = DBConnect.getConnection(); PreparedStatement ps = conn.prepareStatement(byAccount)) {
             ps.setInt(1, accountId);
             try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) return readEmployee(rs, true);
+                if (rs.next()) return readEmployee(rs, false);
             }
         } catch (Exception e) { e.printStackTrace(); }
 
         if (accountFullName == null || accountFullName.trim().isEmpty()) return null;
-        String byName = "SELECT TOP 1 * FROM dbo.Employee WHERE LTRIM(RTRIM(name)) = LTRIM(RTRIM(?)) ORDER BY id DESC";
-        try (Connection conn = DBConnect.getConnection(); PreparedStatement ps = conn.prepareStatement(byName)) {
-            ps.setNString(1, accountFullName.trim());
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    Employee emp = readEmployee(rs, true);
-                    try (PreparedStatement link = conn.prepareStatement(
-                            "UPDATE dbo.Employee SET account_id=? WHERE id=? AND account_id IS NULL")) {
-                        link.setInt(1, accountId);
-                        link.setInt(2, emp.getId());
-                        link.executeUpdate();
+        String byName = "SELECT TOP 1 e.* FROM dbo.Employee e " +
+            "WHERE LTRIM(RTRIM(e.name)) = LTRIM(RTRIM(?)) AND e.account_id IS NULL " +
+            "AND (SELECT COUNT(*) FROM dbo.Employee ee WHERE LTRIM(RTRIM(ee.name)) = LTRIM(RTRIM(?))) = 1 " +
+            "AND (SELECT COUNT(*) FROM dbo.Account aa WHERE LTRIM(RTRIM(aa.fullname)) = LTRIM(RTRIM(?))) = 1";
+        try (Connection conn = DBConnect.getConnection()) {
+            Employee emp = null;
+            try (PreparedStatement ps = conn.prepareStatement(byName)) {
+                ps.setNString(1, accountFullName.trim());
+                ps.setNString(2, accountFullName.trim());
+                ps.setNString(3, accountFullName.trim());
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (rs.next()) emp = readEmployee(rs, false);
+                }
+            }
+            if (emp != null) {
+                try (PreparedStatement link = conn.prepareStatement(
+                        "UPDATE dbo.Employee SET account_id=? WHERE id=? AND account_id IS NULL")) {
+                    link.setInt(1, accountId);
+                    link.setInt(2, emp.getId());
+                    if (link.executeUpdate() == 1) {
+                        emp.setAccountId(accountId);
+                        return emp;
                     }
-                    return emp;
                 }
             }
         } catch (Exception e) { e.printStackTrace(); }

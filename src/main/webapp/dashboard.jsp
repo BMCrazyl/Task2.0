@@ -92,10 +92,34 @@
         <!-- Khối thông tin tài khoản & nút Đăng Xuất ở đáy Sidebar -->
         <div class="mt-auto p-3 border-top border-secondary">
             <div class="d-flex align-items-center mb-2">
-                <i class="bi bi-person-circle fs-3 me-2 text-info"></i>
+                <c:choose>
+                    <c:when test="${sessionScope.user.role == 'EMPLOYEE' and not empty currentEmployee.avatarContentType}">
+                        <a href="${pageContext.request.contextPath}/profile" class="me-2 flex-shrink-0" aria-label="Mở hồ sơ cá nhân">
+                            <img src="${pageContext.request.contextPath}/employee-avatar?self=1" alt="Ảnh đại diện"
+                                 class="rounded-circle border border-info" style="width:36px;height:36px;object-fit:cover">
+                        </a>
+                    </c:when>
+                    <c:when test="${sessionScope.user.role == 'EMPLOYEE'}">
+                        <a href="${pageContext.request.contextPath}/profile" class="me-2 flex-shrink-0 text-info fs-3" aria-label="Mở hồ sơ cá nhân">
+                            <i class="bi bi-person-circle"></i>
+                        </a>
+                    </c:when>
+                    <c:otherwise>
+                        <i class="bi bi-person-circle fs-3 me-2 text-info"></i>
+                    </c:otherwise>
+                </c:choose>
                 <div class="overflow-hidden">
                     <div class="fw-bold text-truncate" style="max-width: 170px;">
-                        ${not empty sessionScope.user.fullname ? sessionScope.user.fullname : 'Người Dùng'}
+                        <c:choose>
+                            <c:when test="${sessionScope.user.role == 'EMPLOYEE'}">
+                                <a href="${pageContext.request.contextPath}/profile" class="text-white text-decoration-none" title="Xem hồ sơ cá nhân">
+                                    ${not empty sessionScope.user.fullname ? sessionScope.user.fullname : 'Nhân Viên'}
+                                </a>
+                            </c:when>
+                            <c:otherwise>
+                                ${not empty sessionScope.user.fullname ? sessionScope.user.fullname : 'Người Dùng'}
+                            </c:otherwise>
+                        </c:choose>
                     </div>
                     <span class="badge ${sessionScope.user.role == 'ADMIN' ? 'bg-danger' : 'bg-primary'}">
                         ${sessionScope.user.role == 'ADMIN' ? 'Quản Lý' : 'Nhân Viên'}

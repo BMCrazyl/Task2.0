@@ -1,6 +1,8 @@
 package controller;
 
 import dao.TaskDao;
+import dao.EmployeeDao;
+import model.Employee;
 import model.Account;
 import model.Task;
 import jakarta.servlet.ServletException;
@@ -17,6 +19,7 @@ import java.util.List;
 @WebServlet(name = "DashboardServlet", urlPatterns = {"/dashboard"})
 public class DashboardServlet extends HttpServlet {
     private final TaskDao taskDao = new TaskDao();
+    private final EmployeeDao employeeDao = new EmployeeDao();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -29,6 +32,15 @@ public class DashboardServlet extends HttpServlet {
         if (currentUser == null) {
             response.sendRedirect(request.getContextPath() + "/login");
             return;
+        }
+
+        if ("EMPLOYEE".equalsIgnoreCase(currentUser.getRole())) {
+            Employee currentEmployee = employeeDao.getByAccountId(currentUser.getId(), currentUser.getFullname());
+            if (currentEmployee != null) {
+                currentUser.setFullname(currentEmployee.getName());
+                session.setAttribute("user", currentUser);
+                request.setAttribute("currentEmployee", currentEmployee);
+            }
         }
 
         String empName = request.getParameter("empName");

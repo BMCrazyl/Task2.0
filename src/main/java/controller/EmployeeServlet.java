@@ -31,7 +31,7 @@ public class EmployeeServlet extends HttpServlet {
         String keyword = request.getParameter("keyword");
         try {
             if (("edit".equals(action) || "detail".equals(action)) && idParam != null && !idParam.trim().isEmpty()) {
-                Employee selected = employeeDao.getById(Integer.parseInt(idParam));
+                Employee selected = employeeDao.getByIdSummary(Integer.parseInt(idParam));
                 if (selected == null) {
                     response.sendError(HttpServletResponse.SC_NOT_FOUND, "Không tìm thấy nhân viên.");
                     return;

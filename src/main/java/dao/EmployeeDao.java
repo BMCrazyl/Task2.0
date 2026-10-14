@@ -114,6 +114,21 @@ public class EmployeeDao {
         return null;
     }
 
+    /** Lightweight lookup for management views that need profile fields but not image bytes. */
+    public Employee getByIdSummary(int id) {
+        if (!ensureProfileSchema()) return null;
+        String sql = "SELECT id, account_id, name, family_name, given_name, email, phone, position, date_of_birth, " +
+                     "identity_number, region, permanent_address, bank_name, bank_account_number, avatar_content_type " +
+                     "FROM dbo.Employee WHERE id = ?";
+        try (Connection conn = DBConnect.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) return readEmployee(rs, false);
+            }
+        } catch (Exception e) { e.printStackTrace(); }
+        return null;
+    }
+
     public Employee getByAccountId(int accountId, String accountFullName) {
         if (!ensureProfileSchema()) return null;
         String byAccount = "SELECT * FROM dbo.Employee WHERE account_id = ?";

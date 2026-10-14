@@ -56,7 +56,7 @@ public class EmployeeAvatarServlet extends HttpServlet {
             return;
         }
 
-        if (employee != null) {
+        if (employee != null && "EMPLOYEE".equalsIgnoreCase(user.getRole())) {
             // Load binary image only for the image response, not during profile/dashboard lookups.
             employee = employeeDao.getById(employee.getId());
         }

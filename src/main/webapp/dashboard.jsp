@@ -19,6 +19,9 @@
             background-color: #0d6efd !important;
         }
     </style>
+    <script>(function(){try{var t=localStorage.getItem("taskmanager-theme");document.documentElement.setAttribute("data-theme",t==="light"?"light":"dark");}catch(e){document.documentElement.setAttribute("data-theme","dark");}})();</script>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/taskmanager-theme.css">
+    <script defer src="${pageContext.request.contextPath}/assets/taskmanager-theme.js"></script>
 </head>
 <body class="bg-light">
 

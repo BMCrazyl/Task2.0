@@ -6,6 +6,9 @@
 <title>Tiếp nhận báo cáo | Task Manager</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <script>(function(){try{var t=localStorage.getItem("taskmanager-theme");document.documentElement.setAttribute("data-theme",t==="light"?"light":"dark");}catch(e){document.documentElement.setAttribute("data-theme","dark");}})();</script>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/taskmanager-theme.css">
+    <script defer src="${pageContext.request.contextPath}/assets/taskmanager-theme.js"></script>
 </head><body class="bg-light">
 <nav class="navbar navbar-dark bg-dark"><div class="container">
 <a class="navbar-brand fw-bold" href="${pageContext.request.contextPath}/dashboard"><i class="bi bi-kanban me-2 text-info"></i>Task Manager</a>

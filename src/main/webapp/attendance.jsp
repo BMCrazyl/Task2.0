@@ -8,6 +8,9 @@
     <title>Chấm công công việc | Task Manager</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <script>(function(){try{var t=localStorage.getItem("taskmanager-theme");document.documentElement.setAttribute("data-theme",t==="light"?"light":"dark");}catch(e){document.documentElement.setAttribute("data-theme","dark");}})();</script>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/taskmanager-theme.css">
+    <script defer src="${pageContext.request.contextPath}/assets/taskmanager-theme.js"></script>
 </head>
 <body class="bg-light">
 <nav class="navbar navbar-dark bg-dark shadow-sm">

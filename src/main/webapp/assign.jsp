@@ -47,6 +47,9 @@
         .autocomplete-empty { padding: .65rem .75rem; color: #6c757d; }
         #taskSelect:disabled { background-color: #e9ecef; }
     </style>
+    <script>(function(){try{var t=localStorage.getItem("taskmanager-theme");document.documentElement.setAttribute("data-theme",t==="light"?"light":"dark");}catch(e){document.documentElement.setAttribute("data-theme","dark");}})();</script>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/taskmanager-theme.css">
+    <script defer src="${pageContext.request.contextPath}/assets/taskmanager-theme.js"></script>
 </head>
 <body class="bg-light">
 

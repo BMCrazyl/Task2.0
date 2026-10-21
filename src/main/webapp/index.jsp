@@ -18,6 +18,9 @@
             box-shadow: 0 1rem 2.5rem rgba(0,0,0,0.15) !important;
         }
     </style>
+    <script>(function(){try{var t=localStorage.getItem("taskmanager-theme");document.documentElement.setAttribute("data-theme",t==="light"?"light":"dark");}catch(e){document.documentElement.setAttribute("data-theme","dark");}})();</script>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/taskmanager-theme.css">
+    <script defer src="${pageContext.request.contextPath}/assets/taskmanager-theme.js"></script>
 </head>
 <body class="bg-light min-vh-100 d-flex align-items-center justify-content-center py-5">
 

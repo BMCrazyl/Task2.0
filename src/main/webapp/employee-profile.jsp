@@ -13,6 +13,9 @@
         .profile-avatar-placeholder { width: 156px; height: 156px; border-radius: 50%; background: #e9ecef; color: #6c757d; display: flex; align-items: center; justify-content: center; font-size: 5rem; margin: 0 auto; }
         .profile-value { min-height: 42px; padding: .6rem .75rem; border: 1px solid #dee2e6; border-radius: .375rem; background: #f8f9fa; overflow-wrap: anywhere; }
     </style>
+    <script>(function(){try{var t=localStorage.getItem("taskmanager-theme");document.documentElement.setAttribute("data-theme",t==="light"?"light":"dark");}catch(e){document.documentElement.setAttribute("data-theme","dark");}})();</script>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/taskmanager-theme.css">
+    <script defer src="${pageContext.request.contextPath}/assets/taskmanager-theme.js"></script>
 </head>
 <body class="bg-light">
 <nav class="navbar navbar-dark bg-dark shadow-sm">

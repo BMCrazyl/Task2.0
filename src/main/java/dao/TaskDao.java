@@ -161,7 +161,10 @@ public class TaskDao {
     public List<Task> getOpenTasks(String keyword) {
         List<Task> list = new ArrayList<>();
         boolean filtered = keyword != null && !keyword.trim().isEmpty();
-        String sql = "SELECT t.*, p.projectName FROM Task t JOIN Project p ON t.project_id = p.id " +
+        String sql = "SELECT t.*, p.projectName, a.employee_id AS assignedEmployeeId, e.name AS assignedEmployeeName " +
+                     "FROM Task t JOIN Project p ON t.project_id = p.id " +
+                     "LEFT JOIN Assignment a ON a.task_id = t.id " +
+                     "LEFT JOIN Employee e ON e.id = a.employee_id " +
                      "WHERE LTRIM(RTRIM(ISNULL(t.status, N''))) NOT IN (N'Hoàn thành', N'Hoan thanh') " +
                      "AND ISNULL(p.isArchived, 0) = 0 " +
                      (filtered ? "AND (t.taskName LIKE ? OR t.description LIKE ? OR p.projectName LIKE ? OR t.status LIKE ? OR t.priority LIKE ?) " : "") +
@@ -178,6 +181,12 @@ public class TaskDao {
                     t.setProjectId(rs.getInt("project_id")); t.setProjectName(rs.getNString("projectName"));
                     t.setDeadline(rs.getDate("deadline")); t.setPriority(rs.getNString("priority"));
                     t.setStatus(rs.getNString("status")); t.setDescription(rs.getNString("description"));
+                    int assignedEmployeeId = rs.getInt("assignedEmployeeId");
+                    if (rs.wasNull()) assignedEmployeeId = 0;
+                    t.setEmployeeId(assignedEmployeeId);
+                    String assignedEmployeeName = rs.getNString("assignedEmployeeName");
+                    t.setEmployeeName(assignedEmployeeName == null || assignedEmployeeName.trim().isEmpty()
+                            ? "Chưa phân công" : assignedEmployeeName);
                     list.add(t);
                 }
             }

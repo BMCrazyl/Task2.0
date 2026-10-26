@@ -69,6 +69,13 @@
 </div>
 
 <div class="container pb-5">
+    <c:if test="${not empty sessionScope.taskMessage}">
+        <div class="alert alert-info alert-dismissible fade show" role="alert">
+            <i class="bi bi-info-circle me-2"></i><c:out value="${sessionScope.taskMessage}"/>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Đóng"></button>
+        </div>
+        <c:remove var="taskMessage" scope="session"/>
+    </c:if>
     <div class="row g-4">
         <!-- Khung Form Thêm / Sửa Công Việc -->
         <div class="col-lg-4">
@@ -185,11 +192,37 @@
                                         </span>
                                     </td>
                                     <td class="text-center">
-                                        <!-- Nút Sửa công việc -->
-                                        <a href="${pageContext.request.contextPath}/tasks?action=edit&id=${t.id}" 
-                                           class="btn btn-outline-warning btn-sm" title="Sửa công việc">
-                                            <i class="bi bi-pencil-square"></i> Sửa
-                                        </a>
+                                        <div class="task-actions">
+                                            <button type="button" class="btn btn-outline-info btn-sm task-detail-button"
+                                                    data-bs-toggle="modal" data-bs-target="#taskDetailModal"
+                                                    data-task-id="${t.id}"
+                                                    data-task-name="<c:out value='${t.taskName}'/>"
+                                                    data-task-description="<c:out value='${t.description}'/>"
+                                                    data-project-name="<c:out value='${t.projectName}'/>"
+                                                    data-task-deadline="<c:out value='${t.deadline}'/>"
+                                                    data-task-priority="<c:out value='${t.priority}'/>"
+                                                    data-task-status="<c:out value='${t.status}'/>"
+                                                    data-employee-id="${t.employeeId}"
+                                                    data-employee-name="<c:out value='${t.employeeName}'/>"
+                                                    title="Xem chi tiết công việc">
+                                                <i class="bi bi-eye me-1"></i>Chi tiết
+                                            </button>
+                                            <a href="${pageContext.request.contextPath}/tasks?action=edit&id=${t.id}"
+                                               class="btn btn-outline-warning btn-sm" title="Sửa công việc">
+                                                <i class="bi bi-pencil-square me-1"></i>Sửa
+                                            </a>
+                                            <c:if test="${sessionScope.user.role == 'ADMIN'}">
+                                                <form action="${pageContext.request.contextPath}/tasks" method="post" class="d-inline"
+                                                      onsubmit="return confirm('Bạn chắc chắn muốn xóa công việc này? Phân công, lịch sử chấm công và báo cáo gắn với công việc có thể bị xóa theo.');">
+                                                    <input type="hidden" name="action" value="delete">
+                                                    <input type="hidden" name="id" value="${t.id}">
+                                                    <input type="hidden" name="keyword" value="<c:out value='${searchKeyword}'/>">
+                                                    <button type="submit" class="btn btn-outline-danger btn-sm" title="Xóa công việc">
+                                                        <i class="bi bi-trash3 me-1"></i>Xóa
+                                                    </button>
+                                                </form>
+                                            </c:if>
+                                        </div>
                                     </td>
                                 </tr>
                             </c:forEach>
@@ -206,6 +239,110 @@
     </div>
 </div>
 
+<!-- Chi tiết công việc: dữ liệu điền ở phía trình duyệt, không thay đổi luồng lưu/sửa -->
+<div class="modal fade" id="taskDetailModal" tabindex="-1" aria-labelledby="taskDetailModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content task-detail-modal">
+            <div class="modal-header align-items-start">
+                <div class="pe-3">
+                    <div class="small text-muted text-uppercase fw-bold mb-1"><i class="bi bi-card-text me-1"></i>Chi tiết công việc</div>
+                    <h5 class="modal-title fw-bold mb-0" id="taskDetailModalLabel">Thông tin công việc</h5>
+                </div>
+                <button type="button" class="btn-close ms-auto" data-bs-dismiss="modal" aria-label="Đóng"></button>
+            </div>
+            <div class="modal-body p-4">
+                <div class="task-detail-grid">
+                    <section class="task-detail-cell">
+                        <span class="task-detail-label">Dự án</span>
+                        <div class="task-detail-value"><i class="bi bi-folder2-open text-primary me-2"></i><span id="taskDetailProject">—</span></div>
+                    </section>
+                    <section class="task-detail-cell">
+                        <span class="task-detail-label">Người đảm nhận</span>
+                        <div class="d-flex align-items-center gap-3">
+                            <img id="taskDetailAvatar" class="task-detail-avatar d-none" alt="Ảnh đại diện nhân viên">
+                            <div id="taskDetailAvatarFallback" class="task-detail-avatar-placeholder"><i class="bi bi-person-fill"></i></div>
+                            <div class="min-w-0">
+                                <div id="taskDetailEmployee" class="task-detail-value">Chưa phân công</div>
+                                <small id="taskDetailEmployeeCaption" class="text-muted">Nhân viên được giao công việc</small>
+                            </div>
+                        </div>
+                    </section>
+                    <section class="task-detail-cell">
+                        <span class="task-detail-label">Hạn chót</span>
+                        <div class="task-detail-value"><i class="bi bi-calendar-event text-info me-2"></i><span id="taskDetailDeadline">—</span></div>
+                    </section>
+                    <section class="task-detail-cell">
+                        <span class="task-detail-label">Mức độ ưu tiên</span>
+                        <div><span id="taskDetailPriority" class="badge bg-secondary">—</span></div>
+                    </section>
+                    <section class="task-detail-cell">
+                        <span class="task-detail-label">Trạng thái</span>
+                        <div><span id="taskDetailStatus" class="badge bg-secondary">—</span></div>
+                    </section>
+                    <section class="task-detail-cell task-detail-description-cell">
+                        <span class="task-detail-label">Mô tả công việc</span>
+                        <div id="taskDetailDescription" class="task-detail-description">Chưa có mô tả.</div>
+                    </section>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <a id="taskDetailEditLink" class="btn btn-outline-warning" href="#">
+                    <i class="bi bi-pencil-square me-1"></i>Sửa công việc
+                </a>
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Đóng</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+(function () {
+    "use strict";
+    var avatarBaseUrl = "${pageContext.request.contextPath}/employee-avatar?id=";
+    var modal = document.getElementById("taskDetailModal");
+    if (!modal) return;
+
+    modal.addEventListener("show.bs.modal", function (event) {
+        var button = event.relatedTarget;
+        if (!button) return;
+        var data = button.dataset;
+        document.getElementById("taskDetailModalLabel").textContent = data.taskName || "Thông tin công việc";
+        document.getElementById("taskDetailProject").textContent = data.projectName || "Chưa xác định";
+        document.getElementById("taskDetailEmployee").textContent = data.employeeName || "Chưa phân công";
+        document.getElementById("taskDetailDeadline").textContent = data.taskDeadline || "Chưa có hạn chót";
+        document.getElementById("taskDetailDescription").textContent = data.taskDescription || "Chưa có mô tả.";
+        var priority = document.getElementById("taskDetailPriority");
+        priority.textContent = data.taskPriority || "Chưa xác định";
+        priority.className = "badge " + (data.taskPriority === "Cao" ? "bg-danger" : (data.taskPriority === "Trung bình" || data.taskPriority === "Trung binh" ? "bg-warning text-dark" : (data.taskPriority === "Thấp" || data.taskPriority === "Thap" ? "bg-success" : "bg-secondary")));
+        var status = document.getElementById("taskDetailStatus");
+        status.textContent = data.taskStatus || "Chưa xác định";
+        status.className = "badge " + ((data.taskStatus === "Hoàn thành" || data.taskStatus === "Hoan thanh") ? "bg-success" : ((data.taskStatus === "Đang thực hiện" || data.taskStatus === "Dang thuc hien") ? "bg-primary" : "bg-secondary"));
+
+        var avatar = document.getElementById("taskDetailAvatar");
+        var fallback = document.getElementById("taskDetailAvatarFallback");
+        var employeeId = Number(data.employeeId || 0);
+        avatar.onerror = function () {
+            avatar.classList.add("d-none");
+            fallback.classList.remove("d-none");
+        };
+        avatar.onload = function () {
+            avatar.classList.remove("d-none");
+            fallback.classList.add("d-none");
+        };
+        if (employeeId > 0) {
+            avatar.src = avatarBaseUrl + encodeURIComponent(employeeId);
+            document.getElementById("taskDetailEmployeeCaption").textContent = "Nhân viên được giao công việc";
+        } else {
+            avatar.removeAttribute("src");
+            avatar.classList.add("d-none");
+            fallback.classList.remove("d-none");
+            document.getElementById("taskDetailEmployeeCaption").textContent = "Công việc hiện chưa được phân công";
+        }
+        document.getElementById("taskDetailEditLink").href =
+            "${pageContext.request.contextPath}/tasks?action=edit&id=" + encodeURIComponent(data.taskId || "");
+    });
+})();
+</script>
 </body>
 </html>
